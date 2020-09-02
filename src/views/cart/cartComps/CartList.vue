@@ -11,8 +11,8 @@
         :thumb="item.image"
       >
         <template #footer>
-          <van-button size="small">+</van-button>
-          <van-button size="small">-</van-button>
+          <van-button size="small" @click="addCount(index)">+</van-button>
+          <van-button size="small" @click="reduceCount(index)">-</van-button>
         </template>
       </van-card>
     </div>
@@ -20,7 +20,6 @@
 </template>
 
 <script>
-
 import Scroll from "components/common/scroll/Scroll.vue";
 export default {
   name: "CartList",
@@ -32,19 +31,49 @@ export default {
       },
     },
   },
-  components:{
-    Scroll
-  },
   data() {
     return {
+      isShow: false,
     };
+  },
+  methods: {
+    addCount(index) {
+      this.cartList[index].count++;
+    },
+    reduceCount(index) {
+      if (!(this.cartList[index].count === 1)) {
+        this.cartList[index].count--;
+      } else {
+        this.dialog(index);
+      }
+    },
+    dialog(index) {
+      this.$dialog
+        .confirm({
+          title: "温馨提示！",
+          message: "您确定要删除此商品吗？",
+        })
+        .then(() => {
+          this.cartList.forEach((item, i) => {
+            if (i === index) {
+              this.cartList.splice(i, 1);
+            }
+          });
+        })
+        .catch(() => {
+          // on cancel
+        });
+    },
+  },
+  components: {
+    Scroll,
   },
 };
 </script>
 <style lang='less' scoped>
 .wrapper {
-    height: calc(100vh - 166px);
-    overflow: hidden;
+  height: calc(100vh - 166px);
+  overflow: hidden;
 }
 .cart_list {
   display: flex;

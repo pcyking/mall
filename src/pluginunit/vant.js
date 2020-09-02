@@ -15,6 +15,7 @@ import {
   SubmitBar,
   Checkbox, 
   CheckboxGroup,
+  Dialog
 } from 'vant';
 
 
@@ -33,3 +34,4 @@ Vue.use(Button);
 Vue.use(SubmitBar);
 Vue.use(Checkbox);
 Vue.use(CheckboxGroup);
+Vue.use(Dialog);
