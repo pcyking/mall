@@ -17,16 +17,23 @@
       :pull-up-load="true"
       @pullingUp="loadMore"
     >
-      <!-- 轮播图 -->
-      <home-swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></home-swiper>
-      <!-- 推荐 -->
-      <recommend :recommend="recommend" />
-      <!-- 推荐下面的介绍 -->
-      <feature-view></feature-view>
-      <!-- 导航吸顶 -->
-      <!-- tabControl导航 -->
-      <tab-control :title="['流行','新款','精选']" @titleChange="titleChange" ref="tabControl2"></tab-control>
-      <goods-list :goods="showGoods"></goods-list>
+      <van-pull-refresh
+        v-model="isLoading"
+        loading-text="刷新中..."
+        success-text="刷新成功!"
+        @refresh="onRefresh"
+      >
+        <!-- 轮播图 -->
+        <home-swiper :banner="banner" @swiperImageLoad="swiperImageLoad"></home-swiper>
+        <!-- 推荐 -->
+        <recommend :recommend="recommend" />
+        <!-- 推荐下面的介绍 -->
+        <feature-view></feature-view>
+        <!-- 导航吸顶 -->
+        <!-- tabControl导航 -->
+        <tab-control :title="['流行','新款','精选']" @titleChange="titleChange" ref="tabControl2"></tab-control>
+        <goods-list :goods="showGoods"></goods-list>
+      </van-pull-refresh>
     </scroll>
     <return-top @click.native="backTop" v-show="isShow" />
   </div>
@@ -36,7 +43,7 @@
 //网络请求 js 模块
 import { getHomeMultidata, getHomeGoods } from "@/network/home.js";
 // 导入混入模块
-import { refresh,backTopmixin } from "@/common/mixin.js";
+import { refresh, backTopmixin } from "@/common/mixin.js";
 
 // home 子组件
 import HomeSwiper from "./childComps/HomeSwiper.vue"; //轮播图
@@ -65,9 +72,10 @@ export default {
       tabOffsetTop: 0,
       isTabFixed: false,
       saveY: 0,
+      isLoading: true,
     };
   },
-  mixins: [refresh,backTopmixin],
+  mixins: [refresh, backTopmixin],
   computed: {
     showGoods() {
       return this.goods[this.currentType].list;
@@ -75,12 +83,12 @@ export default {
   },
   // 保存当前滚动的y值，
   activated() {
-    this.$refs.scroll.refresh()
-    this.$refs.scroll.scrollTop(0,this.saveY,0)
+    this.$refs.scroll.refresh();
+    this.$refs.scroll.scrollTop(0, this.saveY, 0);
   },
   deactivated() {
-    this.$bus.$off('itemImgLoad',this.itemImgListener)
-    this.saveY = this.$refs.scroll.getScrollY()
+    this.$bus.$off("itemImgLoad", this.itemImgListener);
+    this.saveY = this.$refs.scroll.getScrollY();
   },
   created() {
     this.getHomeMultidata();
@@ -143,7 +151,13 @@ export default {
     },
     swiperImageLoad() {
       this.tabOffsetTop = this.$refs.tabControl2.$el.offsetTop;
-    }
+    },
+    onRefresh() {
+      setTimeout(() => {
+        this.getHomeGoods(this.currentType);
+        this.isLoading = false;
+      }, 1000);
+    },
   },
   components: {
     HomeSwiper,
@@ -152,7 +166,7 @@ export default {
     TabControl,
     GoodsList,
     Scroll,
-    ReturnTop
+    ReturnTop,
   },
 };
 </script>

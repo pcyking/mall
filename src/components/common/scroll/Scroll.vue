@@ -20,6 +20,10 @@ export default {
         return 0;
       },
     },
+    pullDownRefresh: {
+      threshold: 50,
+      stop: 20,
+    },
     pullUpLoad: {
       type: Boolean,
       default() {
@@ -46,10 +50,10 @@ export default {
       });
     }
     // 3 监听scroll滚动到底部
-    if(this.pullUpLoad){
-      this.scroll.on('pullingUp',() => {
-        this.$emit('pullingUp');
-      })
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
     }
   },
   methods: {
@@ -72,8 +76,8 @@ export default {
       this.scroll && this.scroll.finishPullUp();
     },
     getScrollY() {
-      return this.scroll ? this.scroll.y : 0
-    }
+      return this.scroll ? this.scroll.y : 0;
+    },
   },
 };
 </script>
